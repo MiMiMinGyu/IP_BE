@@ -5,7 +5,20 @@ import { CreateBoardDto } from './dto/create-board.dto';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [];
+  private boards: Board[] = [
+    {
+      id: uuid(),
+      title: 'Test Board',
+      description: 'This is a test board',
+      status: BoardStatus.PUBLIC,
+    },
+    {
+      id: uuid(),
+      title: 'Second Board',
+      description: 'This is the second board',
+      status: BoardStatus.PRIVATE,
+    },
+  ];
 
   getAllBoards(): Board[] {
     return this.boards;

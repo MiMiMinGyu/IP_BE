@@ -15,20 +15,35 @@ export class AuthService {
     private prismaService: PrismaService,
   ) {}
 
-  async validateUser(username: string, password: string) {
-    if (username === 'test' && password === '1234') {
-      return { userId: 1, username };
+  async validateUser(studentId: string, password: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { studentId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('존재하지 않는 사용자입니다.');
     }
-    throw new UnauthorizedException('Invalid credentials');
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    return user;
   }
 
-  async login(username: string, password: string) {
-    const user = await this.validateUser(username, password);
-    const payload = { username: user.username, sub: user.userId };
+  async login(studentId: string, password: string) {
+    const user = await this.validateUser(studentId, password);
+    const payload = { sub: user.id, studentId: user.studentId };
 
-    // JWT 발급
     return {
       accessToken: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        studentId: user.studentId,
+        nickname: user.nickname,
+        email: user.email,
+      },
     };
   }
 

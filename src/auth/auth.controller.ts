@@ -21,8 +21,8 @@ export class AuthController {
     description: 'JWT 액세스 토큰을 발급합니다.',
   })
   @ApiBody({ type: LoginDto })
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto.username, loginDto.password);
+  login(@Body() body: { studentId: string; password: string }) {
+    return this.authService.login(body.studentId, body.password);
   }
 
   @Post('register')

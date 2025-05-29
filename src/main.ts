@@ -8,7 +8,7 @@ async function bootstrap() {
   // Swagger
   const config = new DocumentBuilder()
     .setTitle('API 문서')
-    .setDescription('NestJS + Swagger + JWT 예제')
+    .setDescription('Every Thing API Documentation')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',

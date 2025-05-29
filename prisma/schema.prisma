@@ -6,39 +6,38 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id          Int      @id @default(autoincrement()) // 내부 PK
-  studentId   String      @unique                      // 로그인용 학번 (8자리 정수)
-  name        String
-  nickname    String   @unique
-  password    String
-  email       String?  @unique
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement()) // 내부 PK
+  studentId String   @unique // 로그인용 학번 (8자리 정수)
+  name      String
+  nickname  String   @unique
+  password  String
+  email     String?  @unique
+  createdAt DateTime @default(now())
 
   favoritePlaces FavoritePlace[]
-  posts        Post[]
-  comments     Comment[]
-  schedules    PersonalSchedule[]
+  posts          Post[]
+  comments       Comment[]
+  schedules      PersonalSchedule[]
 }
 
 model Place {
   id          Int      @id @default(autoincrement())
   name        String
-  category    String   // ex: "restaurant", "cafe", "park"
+  category    String // ex: "restaurant", "cafe", "park"
   address     String
-  description String?  // optional
+  description String? // optional
   latitude    Decimal  @db.Decimal(10, 7)
   longitude   Decimal  @db.Decimal(10, 7)
-  menu        String?  // for restaurants/cafes
-  priceRange  String?  // ex: "만원 이하"
+  menu        String? // for restaurants/cafes
+  priceRange  String? // ex: "만원 이하"
   rating      Float    @default(0.0)
   createdAt   DateTime @default(now())
 
@@ -55,13 +54,13 @@ model FavoritePlace {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
   content   String
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
   comments  Comment[]
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model Comment {

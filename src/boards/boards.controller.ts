@@ -8,20 +8,28 @@ import {
   Patch,
   UsePipes,
   ValidationPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Board } from './boards.model';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatus } from './boards.model';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Boards')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('boards')
 export class BoardsController {
   constructor(private boardsService: BoardsService) {}
 
   @Get('/')
-  getAllBoards(): Board[] {
-    return this.boardsService.getAllBoards(); // getAllBoards() 메서드 호출
+  getAllBoards(@Req() req): Board[] {
+    console.log('로그인한 사용자 정보:', req.user);
+    return this.boardsService.getAllBoards();
   }
 
   @Post()

@@ -28,6 +28,12 @@ export class BoardsService {
 
   /** 게시글 단건 조회 */
   async getBoard(boardId: number) {
+    // 조회수 증가
+    await this.prisma.board.update({
+      where: { id: boardId },
+      data: { views: { increment: 1 } },
+    });
+
     const board = await this.prisma.board.findUnique({
       where: { id: boardId },
       include: {

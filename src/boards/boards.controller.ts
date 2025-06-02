@@ -6,12 +6,22 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { BoardCategory } from '@prisma/client';
-import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('Boards') // ✅ Swagger API 그룹
+@ApiTags('Boards')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}

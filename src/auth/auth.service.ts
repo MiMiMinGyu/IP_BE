@@ -34,7 +34,10 @@ export class AuthService {
 
   async login(studentId: string, password: string) {
     const user = await this.validateUser(studentId, password);
-    const payload = { sub: user.id, studentId: user.studentId };
+    const payload = {
+      sub: user.id,
+      studentId: user.studentId, // 또는 실제 로그인에 사용되는 studentId
+    };
 
     return {
       accessToken: this.jwtService.sign(payload),

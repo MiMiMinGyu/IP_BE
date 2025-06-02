@@ -7,10 +7,15 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('comments')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 

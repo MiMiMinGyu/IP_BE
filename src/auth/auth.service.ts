@@ -52,7 +52,7 @@ export class AuthService {
 
     const exists = await this.prismaService.user.findFirst({
       where: {
-        OR: [{ studentId }, { nickname }, { email }],
+        OR: [{ studentId }, { email }],
       },
     });
 

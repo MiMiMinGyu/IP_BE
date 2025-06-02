@@ -36,7 +36,7 @@ export class AuthService {
     const user = await this.validateUser(studentId, password);
     const payload = {
       sub: user.id,
-      studentId: user.studentId, // 또는 실제 로그인에 사용되는 studentId
+      studentId: user.studentId,
     };
 
     return {

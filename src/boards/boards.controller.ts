@@ -2,36 +2,20 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-<<<<<<< Updated upstream
-  Param,
-  Delete,
-  Param,
-  Body,
-  ParseIntPipe,
-} from '@nestjs/common';
-import { BoardsService } from './boards.service';
-import { Board } from './boards.model';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { BoardStatus } from './boards.model';
-import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-=======
   ParseIntPipe,
   UseGuards,
+  Param,
+  Body,
+  Delete,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
->>>>>>> Stashed changes
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Boards')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('boards')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 

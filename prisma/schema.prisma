@@ -32,15 +32,16 @@ model User {
 }
 
 model Board {
-  id        Int       @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   title     String
   content   String
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int       @map("author_id")
-  views     Int       @default(0)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  author    User          @relation(fields: [authorId], references: [id])
+  authorId  Int           @map("author_id")
+  views     Int           @default(0)
+  category  BoardCategory @default(GENERAL)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  deletedAt DateTime?     @map("deleted_at")
 
   comments Comment[]
   likes    BoardLike[]
@@ -106,4 +107,11 @@ model PersonalSchedule {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("personal_schedules")
+}
+
+enum BoardCategory {
+  GENERAL // 자유
+  QUESTION // 질문
+  INQUIRY // 문의
+  SUGGESTION // 건의
 }

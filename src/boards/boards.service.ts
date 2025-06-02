@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { BoardCategory } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -10,9 +11,9 @@ export class BoardsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /** 게시글 목록 조회 */
-  async getBoards() {
+  async getBoardsByCategory(category: BoardCategory) {
     return this.prisma.board.findMany({
-      where: { deletedAt: null },
+      where: { deletedAt: null, category },
       orderBy: { createdAt: 'desc' },
       include: {
         author: true,
@@ -28,6 +29,12 @@ export class BoardsService {
 
   /** 게시글 단건 조회 */
   async getBoard(boardId: number) {
+    // 조회수 증가
+    await this.prisma.board.update({
+      where: { id: boardId },
+      data: { views: { increment: 1 } },
+    });
+
     const board = await this.prisma.board.findUnique({
       where: { id: boardId },
       include: {
@@ -49,12 +56,18 @@ export class BoardsService {
   }
 
   /** 게시글 생성 */
-  async createBoard(title: string, content: string, userId: number) {
+  async createBoard(
+    title: string,
+    content: string,
+    userId: number,
+    category: BoardCategory,
+  ) {
     return this.prisma.board.create({
       data: {
         title,
         content,
         authorId: userId,
+        category,
       },
     });
   }

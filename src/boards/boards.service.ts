@@ -1,9 +1,11 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { BoardCategory } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -109,20 +111,35 @@ export class BoardsService {
 
   /** 게시글 좋아요 추가 */
   async likeBoard(boardId: number, userId: number) {
+    const board = await this.prisma.board.findUnique({
+      where: { id: boardId },
+    });
+    if (!board || board.deletedAt) {
+      throw new NotFoundException('게시글이 존재하지 않거나 삭제되었습니다.');
+    }
+
     const existing = await this.prisma.boardLike.findUnique({
       where: { userId_boardId: { userId, boardId } },
     });
-    if (existing) throw new Error('이미 좋아요를 눌렀습니다.');
+    if (existing) throw new ConflictException('이미 좋아요를 누르셨습니다.');
 
-    return this.prisma.boardLike.create({
-      data: { boardId, userId },
-    });
+    return this.prisma.boardLike.create({ data: { boardId, userId } });
   }
 
   /** 게시글 좋아요 취소 */
   async unlikeBoard(boardId: number, userId: number) {
-    return this.prisma.boardLike.delete({
-      where: { userId_boardId: { userId, boardId } },
-    });
+    try {
+      return await this.prisma.boardLike.delete({
+        where: { userId_boardId: { userId, boardId } },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('좋아요 기록이 존재하지 않습니다.');
+      }
+      throw error;
+    }
   }
 }

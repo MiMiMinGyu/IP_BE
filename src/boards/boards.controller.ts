@@ -23,7 +23,6 @@ import { CreateBoardDto } from './dto/create-board.dto';
 
 @ApiTags('Boards')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -47,6 +46,7 @@ export class BoardsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '게시글 생성' })
   @ApiBody({ type: CreateBoardDto })
   createBoard(@Body() body: CreateBoardDto, @Req() req) {
@@ -56,6 +56,7 @@ export class BoardsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '게시글 삭제 (soft delete)' })
   @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
   deleteBoard(@Param('id', ParseIntPipe) id: number, @Req() req) {
@@ -64,6 +65,7 @@ export class BoardsController {
   }
 
   @Post(':id/like')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '게시글 좋아요 추가' })
   @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
   likeBoard(@Param('id', ParseIntPipe) boardId: number, @Req() req) {
@@ -72,6 +74,7 @@ export class BoardsController {
   }
 
   @Delete(':id/like')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '게시글 좋아요 취소' })
   @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
   unlikeBoard(@Param('id', ParseIntPipe) boardId: number, @Req() req) {

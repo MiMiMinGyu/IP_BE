@@ -7,6 +7,7 @@ import {
   Body,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { BoardCategory } from '@prisma/client';
@@ -18,6 +19,8 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { Request } from 'express';
 
 @ApiTags('Boards')
 @ApiBearerAuth()
@@ -46,51 +49,18 @@ export class BoardsController {
 
   @Post()
   @ApiOperation({ summary: '게시글 생성' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', example: '제목입니다' },
-        content: { type: 'string', example: '내용입니다' },
-        userId: { type: 'number', example: 1 },
-        category: {
-          type: 'string',
-          enum: Object.values(BoardCategory),
-          example: BoardCategory.GENERAL,
-        },
-      },
-      required: ['title', 'content', 'userId'],
-    },
-  })
-  createBoard(
-    @Body()
-    body: {
-      title: string;
-      content: string;
-      userId: number;
-      category?: BoardCategory;
-    },
-  ) {
-    const { title, content, userId, category = BoardCategory.GENERAL } = body;
+  @ApiBody({ type: CreateBoardDto })
+  createBoard(@Body() body: CreateBoardDto, @Req() req) {
+    const { title, content, category = BoardCategory.GENERAL } = body;
+    const userId = req.user.id;
     return this.boardsService.createBoard(title, content, userId, category);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '게시글 삭제 (soft delete)' })
   @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        userId: { type: 'number', example: 1 },
-      },
-      required: ['userId'],
-    },
-  })
-  deleteBoard(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: { userId: number },
-  ) {
-    return this.boardsService.deleteBoard(id, body.userId);
+  deleteBoard(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    const userId = req.user.id;
+    return this.boardsService.deleteBoard(id, userId);
   }
 }

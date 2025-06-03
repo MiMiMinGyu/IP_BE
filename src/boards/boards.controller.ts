@@ -20,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { Request } from 'express';
 
 @ApiTags('Boards')
 @ApiBearerAuth()
@@ -62,5 +61,21 @@ export class BoardsController {
   deleteBoard(@Param('id', ParseIntPipe) id: number, @Req() req) {
     const userId = req.user.id;
     return this.boardsService.deleteBoard(id, userId);
+  }
+
+  @Post(':id/like')
+  @ApiOperation({ summary: '게시글 좋아요 추가' })
+  @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
+  likeBoard(@Param('id', ParseIntPipe) boardId: number, @Req() req) {
+    const userId = req.user.id;
+    return this.boardsService.likeBoard(boardId, userId);
+  }
+
+  @Delete(':id/like')
+  @ApiOperation({ summary: '게시글 좋아요 취소' })
+  @ApiParam({ name: 'id', type: Number, description: '게시글 ID' })
+  unlikeBoard(@Param('id', ParseIntPipe) boardId: number, @Req() req) {
+    const userId = req.user.id;
+    return this.boardsService.unlikeBoard(boardId, userId);
   }
 }

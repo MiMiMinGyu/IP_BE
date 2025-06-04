@@ -92,7 +92,9 @@ model CommentLike {
 model SchoolSchedule {
   id        Int      @id @default(autoincrement())
   title     String
-  date      DateTime
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+  color     String   @default("#4e73df")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("school_schedules")

@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { MypageModule } from './mypage/mypage.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MypageModule } from './mypage/mypage.module';
     AuthModule,
     CommentsModule,
     MypageModule,
+    ScheduleModule,
   ],
 })
 export class AppModule {}

@@ -123,7 +123,20 @@ export class BoardsService {
     });
     if (existing) throw new ConflictException('이미 좋아요를 누르셨습니다.');
 
-    return this.prisma.boardLike.create({ data: { boardId, userId } });
+    return this.prisma.$transaction([
+      this.prisma.boardLike.create({
+        data: { userId, boardId },
+      }),
+      this.prisma.board.update({
+        where: { id: boardId },
+        data: {
+          likeCount: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
+    // return this.prisma.boardLike.create({ data: { boardId, userId } });
   }
 
   /** 게시글 좋아요 취소 */
